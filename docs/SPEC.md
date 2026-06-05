@@ -145,7 +145,9 @@ UnitConverter_30/
 │   │   ├── assembler.py            # build_registry : 설정+동적등록 조립 (SRP)
 │   │   ├── cli.py                  # render + argparse(run_cli)
 │   │   └── tests/test_cli.py       # Track D (CLI 통합, EXT wiring)
-│   └── tests/test_golden.py        # 교차 도메인 Golden Master (출력 회귀 가드)
+│   └── tests/                      # 교차 도메인 Golden Master
+│       ├── test_golden.py          # render() 출력 vs golden/ fixture 비교
+│       └── golden/                 # 기대 출력 스냅샷 (REFACTOR 기준선)
 ├── examples/units.json             # 설정 파일 예시 (--config 로 로드, EXT-01)
 ├── docs/                           # SPEC.md · unit-converter.jpg
 ├── UnitConverter.py                # 레거시 진입점 (run_cli 위임 shim)
@@ -156,6 +158,8 @@ UnitConverter_30/
 
 > 테스트는 각 도메인 폴더의 `tests/`에 동거(per-domain)하고, 교차 도메인 Golden Master만
 > 패키지 루트 `tests/`에 둔다. pytest는 `testpaths=["unit_converter"]`로 전 도메인을 수집한다.
+> Golden Master 기대값은 `tests/golden/*.txt`에 고정하고, 의도된 출력 변경 시에만
+> `pytest --update-golden unit_converter/tests/test_golden.py`로 갱신한다.
 
 ### 모듈 → FR/NFR 매핑
 
