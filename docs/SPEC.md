@@ -146,11 +146,12 @@ UnitConverter_30/
 │   │   ├── cli.py                  # render + argparse(run_cli)
 │   │   └── tests/test_cli.py       # Track D (CLI 통합, EXT wiring)
 │   └── tests/test_golden.py        # 교차 도메인 Golden Master (출력 회귀 가드)
-├── units.json                      # 기본 변환 비율 (외부화, EXT-01)
+├── examples/units.json             # 설정 파일 예시 (--config 로 로드, EXT-01)
+├── docs/                           # SPEC.md · unit-converter.jpg
 ├── UnitConverter.py                # 레거시 진입점 (run_cli 위임 shim)
 ├── pyproject.toml                  # pytest 설정 (testpaths=unit_converter)
 ├── requirements.txt · conftest.py
-├── README.md · AGENTS.md · SPEC.md
+├── README.md · AGENTS.md
 ```
 
 > 테스트는 각 도메인 폴더의 `tests/`에 동거(per-domain)하고, 교차 도메인 Golden Master만
@@ -219,7 +220,7 @@ python -m unit_converter "meter:2.5" --format json
 python -m unit_converter "meter:2.5" --format csv
 
 # 설정 파일 로드 (비율 외부화)
-python -m unit_converter "meter:2.5" --config units.json
+python -m unit_converter "meter:2.5" --config examples/units.json
 
 # 동적 단위 등록 후 변환
 python -m unit_converter "cubit:1" --register "cubit=0.4572"
@@ -234,7 +235,7 @@ $ python -m unit_converter "meter:2.5"
 2.5 meter = 2.7340 yard
 ```
 
-### 설정 파일 형식 (`units.json`, EXT-01)
+### 설정 파일 형식 (`examples/units.json`, EXT-01)
 
 ```json
 {
@@ -319,7 +320,7 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 |---------|------|--------------|
 | `C-CLI-01` | `["meter:2.5"]` | 기본 실행 → table 출력 (에코 헤더 포함) |
 | `C-CLI-02` | `--format json` | JSON 출력 |
-| `C-CLI-03` | `--config units.json` | 설정 비율 로드 후 변환 (EXT-01) |
+| `C-CLI-03` | `--config <units.json>` | 설정 비율 로드 후 변환 (EXT-01) |
 | `C-CLI-04` | `--register cubit=0.4572` | 동적 등록 후 cubit 변환 (EXT-02) |
 | `C-CFG-02` | `load_config` 정상 파일 | Registry에 비율 반영 (EXT-01) |
 

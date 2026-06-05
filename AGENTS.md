@@ -3,7 +3,7 @@
 ## 주제
 
 **길이 변환을 테스트 가능한 모듈로 만든다.**
-PRD(`README.md`)와 설계(`SPEC.md`)로부터 추적 가능한 모듈을 TDD로 구현한다.
+PRD(`README.md`)와 설계(`docs/SPEC.md`)로부터 추적 가능한 모듈을 TDD로 구현한다.
 
 ## RGIO (작업 정의)
 
@@ -40,7 +40,7 @@ PRD(`README.md`)와 설계(`SPEC.md`)로부터 추적 가능한 모듈을 TDD로
 
 ## Dual-Track RED 설계 (Ask 단계)
 
-RED 테스트는 두 트랙으로 나눠 설계한다. 상세표는 `SPEC.md` §7.1 참조.
+RED 테스트는 두 트랙으로 나눠 설계한다. 상세표는 `docs/SPEC.md` §7.1 참조.
 
 | Track | 범위 | 대표 Test ID |
 |-------|------|--------------|
@@ -65,6 +65,6 @@ pytest -k "FR_02"              # 특정 요구
 ## 참조
 
 - 요구사항: `README.md`
-- 설계/추적표: `SPEC.md` (§4 아키텍처, §4.1 패키지 구조, §7 PRD→TC 추적표)
+- 설계/추적표: `docs/SPEC.md` (§4 아키텍처, §4.1 패키지 구조, §7 PRD→TC 추적표)
 - 루프 규칙 상세: `.cursor/rules/tdd-arrr-loop.mdc`
 - 워크플로 스킬: `.cursor/skills/length-converter-tdd/SKILL.md`

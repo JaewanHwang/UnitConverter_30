@@ -1,6 +1,6 @@
 
 ## Unit Converter (Python)
-![unit-converter](./unit-converter.jpg)
+![unit-converter](./docs/unit-converter.jpg)
 ### Overview
 - 사용자가 입력한 길이(`단위:값`)를 기반으로, 해당 값을 다른 모든 단위로 변환해 출력하는 프로그램.
 - 새로운 단위를 추가할 때 기존 코드의 변경이 최소화되도록 설계한다.
@@ -58,13 +58,13 @@ deactivate
 python -m unit_converter "meter:2.5" --format json
 
 # 설정 파일에서 비율 로드 (EXT-01)
-python -m unit_converter "meter:2.5" --config units.json
+python -m unit_converter "meter:2.5" --config examples/units.json
 
 # 동적 단위 등록: 1 cubit = 0.4572 meter (EXT-02)
 python -m unit_converter "cubit:1" --register "cubit=0.4572"
 ```
 
-설계·추적표(PRD→TC)는 [`SPEC.md`](./SPEC.md) 참조.
+설계·추적표(PRD→TC)는 [`docs/SPEC.md`](./docs/SPEC.md) 참조.
 
 ### 비즈니스 로직
 - `1 meter = 3.28084 feet`

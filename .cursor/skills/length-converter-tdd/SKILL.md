@@ -7,7 +7,7 @@ description: Develop the UnitConverter length-conversion CLI with the ARRR (RED�
 
 ## 주제
 
-길이 변환을 테스트 가능한 모듈로 만든다. PRD(`README.md`) / 설계(`SPEC.md`)에서 추적 가능한 코드로 구현(C2C).
+길이 변환을 테스트 가능한 모듈로 만든다. PRD(`README.md`) / 설계(`docs/SPEC.md`)에서 추적 가능한 코드로 구현(C2C).
 
 ## RGIO
 
@@ -31,7 +31,7 @@ ARRR Cycle — 대상 요구 ID: ____
 ### Ask — 🔴 RED
 `tests/test_convert.py`에 실패하는 테스트부터 작성한다. 대상 요구 ID를 주석으로 단다. 실행해 **실패를 먼저 확인**한다.
 
-RED 테스트는 두 트랙으로 나눠 설계한다 (상세표: `SPEC.md` §7.1):
+RED 테스트는 두 트랙으로 나눠 설계한다 (상세표: `docs/SPEC.md` §7.1):
 
 - **Track A — UI / Boundary**: `U-IN-01`(빈 입력), `U-IN-02`(콜론 없음), `U-IN-03`(음수 거부), `U-OUT-01`(3줄 출력 스켈레톤)
 - **Track B — Domain / Logic**: `D-CNV-01`(`to_meter`), `D-CNV-02`/`D-CNV-03`(`convert_all`), `D-REG-01`(`register`), `D-CFG-01`(`load json`→`ConfigError`)
@@ -78,7 +78,7 @@ def test_table_golden():  # EXT-03
 | NFR-01 OCP | Repeat(등록) | `test_registry.py` |
 | EXT-01/02/03 | 확장 | `test_config.py`, `test_formatters.py` |
 
-자세한 설계·추적표는 `SPEC.md`, 루프 규칙은 `.cursor/rules/tdd-arrr-loop.mdc` 참조.
+자세한 설계·추적표는 `docs/SPEC.md`, 루프 규칙은 `.cursor/rules/tdd-arrr-loop.mdc` 참조.
 
 ## 금지 사항
 

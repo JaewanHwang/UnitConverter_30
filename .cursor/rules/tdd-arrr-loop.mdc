@@ -33,7 +33,7 @@ alwaysApply: false
 
 ## Dual-Track RED 설계
 
-RED 테스트는 두 트랙으로 나눠 설계한다 (상세표는 `SPEC.md` §7.1).
+RED 테스트는 두 트랙으로 나눠 설계한다 (상세표는 `docs/SPEC.md` §7.1).
 
 - **Track A — UI / Boundary**: `U-IN-01`(빈 입력), `U-IN-02`(콜론 없음), `U-IN-03`(음수 거부), `U-OUT-01`(3줄 출력 스켈레톤).
 - **Track B — Domain / Logic**: `D-CNV-01`(`to_meter`), `D-CNV-02`/`D-CNV-03`(`convert_all`), `D-REG-01`(`register`), `D-CFG-01`(`load json`→`ConfigError`).
