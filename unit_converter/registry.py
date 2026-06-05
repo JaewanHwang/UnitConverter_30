@@ -2,6 +2,13 @@
 
 from unit_converter.exceptions import UnknownUnitError
 
+DEFAULT_RATIOS = {"feet": 3.28084, "yard": 1.09361}
+
+
+def default_registry():
+    """설정 파일이 없을 때 사용하는 기본 비율 레지스트리."""
+    return UnitRegistry(base="meter", ratios=dict(DEFAULT_RATIOS))
+
 
 class UnitRegistry:
     """`1 base = N unit` 형태의 meter→unit 비율을 보관한다."""
