@@ -11,12 +11,15 @@ from unit_converter.app.assembler import build_registry
 _PARSER = InputParser()
 
 
-def render(text, converter, fmt="table", precision=4):
+def render(text, converter, fmt="table", precision=4, json_indent=None):
     parsed = validate(_PARSER.parse(text))
     converter.registry.ensure_known(parsed.unit)  # 미등록 단위면 UnknownUnitError
     results = converter.convert_all(parsed.value, parsed.unit)
 
-    formatter = get_formatter(fmt, precision=precision)
+    formatter_kwargs = {"precision": precision}
+    if fmt == "json" and json_indent is not None:
+        formatter_kwargs["indent"] = json_indent
+    formatter = get_formatter(fmt, **formatter_kwargs)
     if fmt == "table":
         body = formatter.format(
             results,

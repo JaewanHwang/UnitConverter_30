@@ -6,8 +6,9 @@ from unit_converter.domain.models import ConversionResult
 
 
 class JsonFormatter:
-    def __init__(self, precision=4):
+    def __init__(self, precision=4, indent=None):
         self.precision = precision
+        self.indent = indent
 
     def format(self, results: list[ConversionResult], **_) -> str:
         payload = [
@@ -19,4 +20,4 @@ class JsonFormatter:
             }
             for r in results
         ]
-        return json.dumps(payload, ensure_ascii=False)
+        return json.dumps(payload, ensure_ascii=False, indent=self.indent)

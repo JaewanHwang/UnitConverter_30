@@ -39,6 +39,15 @@ def test_json_formatter_serializes():  # F-JSN-01
     assert isinstance(parsed, list) and len(parsed) == 2
     assert parsed[0]["target_unit"] == "feet"
     assert parsed[0]["target_value"] == 8.2021
+    assert "\n" not in out
+
+
+def test_json_formatter_pretty_indent():  # F-JSN-02
+    out = JsonFormatter(indent=2).format(RESULTS)
+    parsed = json.loads(out)
+    assert len(parsed) == 2
+    assert out.startswith("[\n")
+    assert '  "target_unit": "feet"' in out
 
 
 def test_csv_formatter_serializes():  # F-CSV-01

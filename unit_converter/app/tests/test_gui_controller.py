@@ -17,17 +17,28 @@ def controller():
     return GuiController()
 
 
-def test_convert_meter_returns_table_grid(controller):  # G-GUI-01
+def test_convert_meter_returns_table_grid(controller):  # G-GUI-01 (CLI ASCII)
     lines = controller.convert(unit="meter", value="2.5", fmt="table")
     assert lines[0].startswith("+")
     assert "| meter |   2.5 |    2.5 |" in lines
     assert "| feet  |   2.5 | 8.2021 |" in lines
 
 
-def test_convert_json_format(controller):  # G-GUI-01
-    out = "\n".join(controller.convert(unit="meter", value="2.5", fmt="json"))
-    assert '"target_unit": "feet"' in out
-    assert '"target_unit": "yard"' in out
+def test_convert_table_rows_for_gui_widget(controller):  # G-GUI-01
+    rows = controller.convert_table_rows(unit="meter", value="2.5")
+    assert rows == [
+        ("meter", "2.5", "2.5"),
+        ("feet", "2.5", "8.2021"),
+        ("yard", "2.5", "2.7340"),
+    ]
+
+
+def test_convert_json_format_pretty(controller):  # G-GUI-01
+    lines = controller.convert(unit="meter", value="2.5", fmt="json")
+    out = "\n".join(lines)
+    assert lines[0].startswith("[")
+    assert '  "target_unit": "feet"' in out
+    assert '  "target_unit": "yard"' in out
 
 
 def test_available_units_includes_defaults(controller):  # G-GUI-03
