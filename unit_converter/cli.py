@@ -6,8 +6,7 @@ from unit_converter.parser import InputParser
 from unit_converter.validator import validate
 from unit_converter.formatters import get_formatter
 from unit_converter.converter import Converter
-from unit_converter.registry import default_registry
-from unit_converter.config import load_config
+from unit_converter.assembler import build_registry
 
 _PARSER = InputParser()
 
@@ -38,18 +37,8 @@ def _build_parser():
     return p
 
 
-def _registry_from_args(args):
-    # --config가 있으면 설정 로드, 없으면 기본 비율 (EXT-01)
-    registry = load_config(args.config) if args.config else default_registry()
-    # --register UNIT=METER_TO_UNIT 동적 등록 (EXT-02)
-    # 입력은 "1 unit = X meter"의 X(meter당 비율)이므로 meter→unit = 1/X 로 환산
-    for item in args.register:
-        unit, _, value = item.partition("=")
-        registry.register(unit.strip(), 1 / float(value))
-    return registry
-
-
 def run_cli(argv):
     args = _build_parser().parse_args(argv)
-    converter = Converter(_registry_from_args(args))
+    registry = build_registry(config_path=args.config, registrations=args.register)
+    converter = Converter(registry)
     return render(args.input, converter, fmt=args.fmt, precision=args.precision)
