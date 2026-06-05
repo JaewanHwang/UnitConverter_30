@@ -1,7 +1,7 @@
 """InputParser — "unit:value" → ParsedInput (SPEC §4, FR-01/FR-05)."""
 
 from unit_converter.exceptions import InvalidFormatError
-from unit_converter.models import ParsedInput
+from unit_converter.domain.models import ParsedInput
 
 
 class InputParser:

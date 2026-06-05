@@ -2,7 +2,7 @@
 
 import sys
 
-from unit_converter.cli import run_cli
+from unit_converter.app.cli import run_cli
 
 
 def main(argv=None):

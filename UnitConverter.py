@@ -5,7 +5,7 @@
 신규 CLI: `python -m unit_converter "meter:2.5" [--format ...]`
 """
 
-from unit_converter.cli import run_cli
+from unit_converter.app.cli import run_cli
 from unit_converter.exceptions import (
     InvalidFormatError,
     NegativeValueError,

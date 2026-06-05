@@ -8,10 +8,10 @@ U-OUT-01: 입력 에코(헤더) 1줄 + 변환 라인(입력 단위 제외)으로
 
 import pytest
 
-from unit_converter.converter import Converter
-from unit_converter.registry import UnitRegistry
-from unit_converter.parser import parse
-from unit_converter.cli import render
+from unit_converter.domain.converter import Converter
+from unit_converter.domain.registry import UnitRegistry
+from unit_converter.parsing.parser import parse
+from unit_converter.app.cli import render
 from unit_converter.exceptions import InvalidFormatError, NegativeValueError
 
 DEFAULT_RATIOS = {"feet": 3.28084, "yard": 1.09361}

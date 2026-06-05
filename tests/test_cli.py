@@ -5,7 +5,7 @@ SPEC.md §7.1 Track D 기준. run_cli(argv) 조립 검증.
 
 import json
 
-from unit_converter.cli import run_cli
+from unit_converter.app.cli import run_cli
 
 
 def test_cli_default_table():  # C-CLI-01

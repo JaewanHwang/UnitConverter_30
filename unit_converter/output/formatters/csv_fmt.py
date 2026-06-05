@@ -3,7 +3,7 @@
 import csv
 import io
 
-from unit_converter.models import ConversionResult
+from unit_converter.domain.models import ConversionResult
 
 HEADER = ["source_unit", "source_value", "target_unit", "target_value"]
 

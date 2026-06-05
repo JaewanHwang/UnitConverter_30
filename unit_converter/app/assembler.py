@@ -3,8 +3,8 @@
 CLI(인자 파싱)와 도메인(registry/converter) 사이의 조립 책임을 분리한다.
 """
 
-from unit_converter.registry import default_registry
-from unit_converter.config import load_config
+from unit_converter.domain.registry import default_registry
+from unit_converter.output.config import load_config
 
 
 def build_registry(config_path=None, registrations=None):

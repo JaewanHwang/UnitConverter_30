@@ -1,6 +1,6 @@
 """Converter — value → meter → 전 단위 (SPEC §3/§4, FR-02)."""
 
-from unit_converter.models import ConversionResult
+from unit_converter.domain.models import ConversionResult
 
 
 class Converter:

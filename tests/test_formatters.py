@@ -7,11 +7,11 @@ import json
 
 import pytest
 
-from unit_converter.models import ConversionResult
-from unit_converter.formatters import get_formatter
-from unit_converter.formatters.table import TableFormatter
-from unit_converter.formatters.json_fmt import JsonFormatter
-from unit_converter.formatters.csv_fmt import CsvFormatter
+from unit_converter.domain.models import ConversionResult
+from unit_converter.output.formatters import get_formatter
+from unit_converter.output.formatters.table import TableFormatter
+from unit_converter.output.formatters.json_fmt import JsonFormatter
+from unit_converter.output.formatters.csv_fmt import CsvFormatter
 from unit_converter.exceptions import UnknownFormatError
 
 RESULTS = [

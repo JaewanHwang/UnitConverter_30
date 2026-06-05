@@ -4,9 +4,9 @@
 """
 
 from unit_converter.exceptions import UnknownFormatError
-from unit_converter.formatters.table import TableFormatter
-from unit_converter.formatters.json_fmt import JsonFormatter
-from unit_converter.formatters.csv_fmt import CsvFormatter
+from unit_converter.output.formatters.table import TableFormatter
+from unit_converter.output.formatters.json_fmt import JsonFormatter
+from unit_converter.output.formatters.csv_fmt import CsvFormatter
 
 FORMATTERS = {
     "table": TableFormatter,

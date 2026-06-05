@@ -1,6 +1,6 @@
 """TableFormatter — 사람이 읽는 라인 출력 (EXT-03, F-TBL-01)."""
 
-from unit_converter.models import ConversionResult
+from unit_converter.domain.models import ConversionResult
 
 
 class TableFormatter:

@@ -6,7 +6,7 @@ SPEC.md §7.1 Track D (C-CFG-02).
 
 import json
 
-from unit_converter.config import load_config
+from unit_converter.output.config import load_config
 
 
 def test_load_config_json_applies_ratios(tmp_path):  # C-CFG-02

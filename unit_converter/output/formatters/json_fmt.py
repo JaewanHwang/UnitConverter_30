@@ -2,7 +2,7 @@
 
 import json
 
-from unit_converter.models import ConversionResult
+from unit_converter.domain.models import ConversionResult
 
 
 class JsonFormatter:

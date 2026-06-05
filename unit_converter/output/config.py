@@ -3,7 +3,7 @@
 import json
 
 from unit_converter.exceptions import ConfigError
-from unit_converter.registry import UnitRegistry
+from unit_converter.domain.registry import UnitRegistry
 
 
 def load_config(path):

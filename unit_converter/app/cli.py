@@ -2,11 +2,11 @@
 
 import argparse
 
-from unit_converter.parser import InputParser
-from unit_converter.validator import validate
-from unit_converter.formatters import get_formatter
-from unit_converter.converter import Converter
-from unit_converter.assembler import build_registry
+from unit_converter.parsing.parser import InputParser
+from unit_converter.parsing.validator import validate
+from unit_converter.output.formatters import get_formatter
+from unit_converter.domain.converter import Converter
+from unit_converter.app.assembler import build_registry
 
 _PARSER = InputParser()
 

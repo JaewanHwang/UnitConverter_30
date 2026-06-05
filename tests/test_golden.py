@@ -4,8 +4,8 @@
 이후 구조 변경(InputParser/registry 추출) 시 출력이 한 글자도 바뀌지 않아야 한다.
 """
 
-from unit_converter.converter import Converter
-from unit_converter.registry import UnitRegistry
+from unit_converter.domain.converter import Converter
+from unit_converter.domain.registry import UnitRegistry
 
 DEFAULT_RATIOS = {"feet": 3.28084, "yard": 1.09361}
 
@@ -15,7 +15,7 @@ def _converter():
 
 
 def test_render_meter_golden():  # EXT-03 / FR-02
-    from unit_converter.cli import render
+    from unit_converter.app.cli import render
 
     out = "\n".join(render("meter:2.5", _converter()))
     assert out == (
@@ -26,7 +26,7 @@ def test_render_meter_golden():  # EXT-03 / FR-02
 
 
 def test_render_feet_golden():  # EXT-03 / FR-02
-    from unit_converter.cli import render
+    from unit_converter.app.cli import render
 
     out = "\n".join(render("feet:10", _converter()))
     assert out == (
@@ -37,7 +37,7 @@ def test_render_feet_golden():  # EXT-03 / FR-02
 
 
 def test_render_json_golden():  # EXT-03 (F-JSN-01 wiring)
-    from unit_converter.cli import render
+    from unit_converter.app.cli import render
 
     out = "\n".join(render("meter:2.5", _converter(), fmt="json"))
     assert out == (
@@ -49,7 +49,7 @@ def test_render_json_golden():  # EXT-03 (F-JSN-01 wiring)
 
 
 def test_render_csv_golden():  # EXT-03 (F-CSV-01 wiring)
-    from unit_converter.cli import render
+    from unit_converter.app.cli import render
 
     out = "\n".join(render("meter:2.5", _converter(), fmt="csv"))
     assert out == (

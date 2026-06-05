@@ -1,13 +1,22 @@
-"""UnitConverter — 길이 단위 변환 패키지 (PRD/SPEC 추적 가능 재구현)."""
+"""UnitConverter — 길이 단위 변환 패키지 (PRD/SPEC 추적 가능 재구현).
 
-from unit_converter.models import ParsedInput, ConversionResult
-from unit_converter.parser import InputParser
-from unit_converter.registry import UnitRegistry, default_registry
-from unit_converter.converter import Converter
-from unit_converter.config import load_config
-from unit_converter.assembler import build_registry
-from unit_converter.formatters import get_formatter
-from unit_converter.cli import render, run_cli
+도메인 단위 패키지 구성:
+- domain   : models / registry / converter (순수 핵심)
+- parsing  : parser / validator (입력 처리)
+- output   : config / formatters (출력·외부 IO)
+- app      : assembler / cli (조립·진입)
+"""
+
+from unit_converter.domain import (
+    ParsedInput,
+    ConversionResult,
+    UnitRegistry,
+    default_registry,
+    Converter,
+)
+from unit_converter.parsing import InputParser, parse, validate
+from unit_converter.output import load_config, get_formatter
+from unit_converter.app import build_registry, render, run_cli
 from unit_converter.exceptions import (
     InvalidFormatError,
     NegativeValueError,
@@ -20,6 +29,8 @@ __all__ = [
     "ParsedInput",
     "ConversionResult",
     "InputParser",
+    "parse",
+    "validate",
     "UnitRegistry",
     "default_registry",
     "Converter",
