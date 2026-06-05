@@ -38,6 +38,26 @@ def _render_grid(rows: list[tuple[str, str, str]]) -> str:
     return "\n".join(lines)
 
 
+def build_table_rows(
+    results: list[ConversionResult],
+    source_unit: str,
+    source_value: float,
+    units: list[str],
+    precision: int = 4,
+) -> list[tuple[str, str, str]]:
+    """GUI·CLI 공통 (unit, input, result) 행 목록."""
+    converted = {r.target_unit: r.target_value for r in results}
+    input_text = _format_input(source_value)
+    rows = []
+    for unit in units:
+        if unit == source_unit:
+            result_text = input_text
+        else:
+            result_text = _format_result(converted[unit], precision)
+        rows.append((unit, input_text, result_text))
+    return rows
+
+
 class TableFormatter:
     def __init__(self, precision=4):
         self.precision = precision
@@ -59,13 +79,7 @@ class TableFormatter:
                 for r in results
             )
 
-        converted = {r.target_unit: r.target_value for r in results}
-        input_text = _format_input(source_value)
-        rows = []
-        for unit in units:
-            if unit == source_unit:
-                result_text = input_text
-            else:
-                result_text = _format_result(converted[unit], self.precision)
-            rows.append((unit, input_text, result_text))
+        rows = build_table_rows(
+            results, source_unit, source_value, units, self.precision
+        )
         return _render_grid(rows)
