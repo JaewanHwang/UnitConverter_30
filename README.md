@@ -17,8 +17,17 @@ venv\Scripts\activate
 # 가상환경 활성화 (macOS/Linux)
 source venv/bin/activate
 
-# 실행
+# 의존성 설치
+pip install -r requirements.txt
+
+# 실행 (인자 기반 CLI)
+python -m unit_converter "meter:2.5"
+
+# 레거시 인터랙티브 실행 (내부적으로 동일 패키지 사용)
 python UnitConverter.py
+
+# 테스트
+pytest -q
 
 # 가상환경 비활성화
 deactivate
@@ -27,23 +36,35 @@ deactivate
 ### 기본 요구사항
 1. 사용자 입력 예시:
    ```
-   meter:2.5
+   $ python -m unit_converter "meter:2.5"
+   2.5 meter:
+   2.5 meter = 8.2021 feet
+   2.5 meter = 2.734 yard
    ```
-   → 출력:
-   ```
-   2.5 meter = 8.2 feet
-   2.5 meter = 2.7 yard
-   ...
-   ```
+   (출력 정밀도 기본 4자리, `--precision`으로 조정. 변환 라인은 입력 단위 제외.)
 
 2. 현재 지원 단위:
    - meter
    - feet
    - yard
 
-3. 새로운 단위가 추가될 때도 기존 코드의 변경이 최소화되도록 할 것.
+3. 새로운 단위가 추가될 때도 기존 코드의 변경이 최소화되도록 할 것. (OCP — `UnitRegistry` 비율 등록)
 
 4. 각 단위 간 변환이 정확히 계산되도록 테스트 코드를 작성할 것.
+
+### 추가 기능 (CLI 옵션)
+```bash
+# 출력 포맷 선택 (table | json | csv)
+python -m unit_converter "meter:2.5" --format json
+
+# 설정 파일에서 비율 로드 (EXT-01)
+python -m unit_converter "meter:2.5" --config units.json
+
+# 동적 단위 등록: 1 cubit = 0.4572 meter (EXT-02)
+python -m unit_converter "cubit:1" --register "cubit=0.4572"
+```
+
+설계·추적표(PRD→TC)는 [`SPEC.md`](./SPEC.md) 참조.
 
 ### 비즈니스 로직
 - `1 meter = 3.28084 feet`
