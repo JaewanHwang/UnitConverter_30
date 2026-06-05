@@ -23,6 +23,9 @@ pip install -r requirements.txt
 # 실행 (인자 기반 CLI)
 python -m unit_converter "meter:2.5"
 
+# GUI 실행 (PyQt6)
+python -m unit_converter.app.gui
+
 # 레거시 인터랙티브 실행 (내부적으로 동일 패키지 사용)
 python UnitConverter.py
 
