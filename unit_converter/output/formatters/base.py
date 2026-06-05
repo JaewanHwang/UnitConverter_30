@@ -2,7 +2,7 @@
 
 from typing import Protocol
 
-from unit_converter.models import ConversionResult
+from unit_converter.domain.models import ConversionResult
 
 
 class OutputFormatter(Protocol):

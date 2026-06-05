@@ -5,13 +5,14 @@ SPEC.md §7.1 Track D 기준. run_cli(argv) 조립 검증.
 
 import json
 
-from unit_converter.cli import run_cli
+from unit_converter.app.cli import run_cli
 
 
 def test_cli_default_table():  # C-CLI-01
     lines = run_cli(["meter:2.5"])
-    assert lines[0] == "2.5 meter:"
-    assert "2.5 meter = 8.2021 feet" in lines
+    assert lines[0].startswith("+")
+    assert "| meter |   2.5 |    2.5 |" in lines
+    assert "| feet  |   2.5 | 8.2021 |" in lines
     assert len(lines) >= 3
 
 

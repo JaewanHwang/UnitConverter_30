@@ -33,8 +33,8 @@
 - `1 meter = 1.09361 yard`
 - 모든 변환은 **입력값 → meter → 목표 단위** 2단계로 수행한다. (단위 N개여도 비율은 N개만 유지 → DRY/OCP)
 - 출력 정밀도: 기본 **소수점 4자리**(`--precision`으로 조정 가능, 기본 4).
-- 변환 라인에는 **입력 단위 자기 자신을 제외**한다.
-- 맨 앞에 **입력 에코(헤더) 라인**을 1줄 추가한다 → 총 출력 3줄 이상 (U-OUT-01).
+- json/csv 변환 라인에는 **입력 단위 자기 자신을 제외**한다.
+- **table** 포맷은 전 단위를 `unit | input | result` ASCII 그리드로 출력한다 (U-OUT-01).
 
 ---
 
@@ -116,51 +116,64 @@ class OutputFormatter(Protocol):
 
 ## 4.1 패키지 구조 (OCP / SRP)
 
+> 패키지는 **도메인 단위**로 묶는다 (레이어 평면 나열 대신).
+> 의존 방향: `app → parsing/output → domain`, `exceptions`는 공용 leaf.
+
 ```
 UnitConverter_30/
 ├── unit_converter/                 # 소스 패키지
-│   ├── __init__.py                 # 공개 API 노출 (Converter, UnitRegistry 등)
+│   ├── __init__.py                 # 공개 API 노출 (도메인 심볼 re-export)
 │   ├── __main__.py                 # python -m unit_converter 진입점
-│   ├── cli.py                      # 인자 파싱 + 모듈 조립 (I/O 경계)
-│   ├── models.py                   # ParsedInput, ConversionResult (frozen dataclass)
-│   ├── exceptions.py               # InvalidFormatError / NegativeValueError / UnknownUnitError
-│   ├── parser.py                   # InputParser : "unit:value" → ParsedInput
-│   ├── validator.py                # Validator : 형식·음수·미등록 검증
-│   ├── registry.py                 # UnitRegistry : 비율 보관/조회/동적등록
-│   ├── converter.py                # Converter : value → meter → 전 단위
-│   ├── config.py                   # ConfigLoader : units.json/yaml 로드
-│   └── formatters/                 # 출력 전략 (포맷 추가 = 파일 추가)
-│       ├── __init__.py             # FORMATTERS 레지스트리 + get_formatter()
-│       ├── base.py                 # OutputFormatter Protocol/ABC
-│       ├── table.py                # TableFormatter
-│       ├── json_fmt.py             # JsonFormatter
-│       └── csv_fmt.py              # CsvFormatter
-├── tests/                          # PRD 추적 테스트
-│   ├── test_parser.py              # FR-01, FR-05
-│   ├── test_validator.py           # FR-04, FR-05
-│   ├── test_registry.py            # FR-03, NFR-01, EXT-02
-│   ├── test_converter.py           # FR-02, NFR-01
-│   ├── test_config.py              # EXT-01
-│   ├── test_formatters.py          # EXT-03
-│   └── test_cli.py                 # end-to-end (조립 검증)
-├── units.json                      # 기본 변환 비율 (외부화, EXT-01)
-├── requirements.txt
-├── README.md                       # 인자 기반 CLI로 갱신
-└── SPEC.md
+│   ├── exceptions.py               # 공용 도메인 예외 (모든 도메인이 의존하는 leaf)
+│   ├── domain/                     # [핵심 도메인] 순수 로직 (I/O 없음)
+│   │   ├── models.py               # ParsedInput, ConversionResult
+│   │   ├── registry.py             # UnitRegistry, default_registry (OCP)
+│   │   ├── converter.py            # Converter : value → meter → 전 단위
+│   │   └── tests/test_convert.py   # Track B (FR-02, NFR-01, EXT-02, D-CFG-01)
+│   ├── parsing/                    # [입력 도메인]
+│   │   ├── parser.py               # InputParser : "unit:value" → ParsedInput
+│   │   ├── validator.py            # validate : 음수/검증
+│   │   └── tests/test_ui_boundary.py  # Track A (FR-01/04/05, U-OUT-01)
+│   ├── output/                     # [출력 도메인] 직렬화·외부 설정
+│   │   ├── config.py               # load_config : units.json 로드 (EXT-01)
+│   │   ├── formatters/             # 출력 전략 (포맷 추가 = 파일 추가, EXT-03)
+│   │   │   ├── base.py             # OutputFormatter Protocol
+│   │   │   ├── table.py / json_fmt.py / csv_fmt.py
+│   │   │   └── __init__.py         # FORMATTERS 레지스트리 + get_formatter()
+│   │   └── tests/                  # test_formatters.py (C), test_config.py (EXT-01)
+│   ├── app/                        # [응용 계층] 조립·진입 (I/O 경계)
+│   │   ├── assembler.py            # build_registry : 설정+동적등록 조립 (SRP)
+│   │   ├── cli.py                  # render + argparse(run_cli)
+│   │   └── tests/test_cli.py       # Track D (CLI 통합, EXT wiring)
+│   └── tests/                      # 교차 도메인 Golden Master
+│       ├── test_golden.py          # render() 출력 vs golden/ fixture 비교
+│       └── golden/                 # 기대 출력 스냅샷 (REFACTOR 기준선)
+├── examples/units.json             # 설정 파일 예시 (--config 로 로드, EXT-01)
+├── docs/                           # SPEC.md · unit-converter.jpg
+├── UnitConverter.py                # 레거시 진입점 (run_cli 위임 shim)
+├── pyproject.toml                  # pytest 설정 (testpaths=unit_converter)
+├── requirements.txt · conftest.py
+├── README.md · AGENTS.md
 ```
+
+> 테스트는 각 도메인 폴더의 `tests/`에 동거(per-domain)하고, 교차 도메인 Golden Master만
+> 패키지 루트 `tests/`에 둔다. pytest는 `testpaths=["unit_converter"]`로 전 도메인을 수집한다.
+> Golden Master 기대값은 `tests/golden/*.txt`에 고정하고, 의도된 출력 변경 시에만
+> `pytest --update-golden unit_converter/tests/test_golden.py`로 갱신한다.
 
 ### 모듈 → FR/NFR 매핑
 
-| 모듈 | 단일 책임 (SRP) | 충족 요구 |
+| 도메인 / 모듈 | 단일 책임 (SRP) | 충족 요구 |
 |------|----------------|-----------|
-| `parser.py` | 문자열 → 구조화 객체 (순수 함수) | **FR-01**, FR-05 |
-| `validator.py` | 형식/음수/미등록 검증, 도메인 예외 | **FR-04**, FR-05, FR-03 |
-| `registry.py` | 단위·비율 보관/조회/동적등록 | **FR-03**, **NFR-01(OCP)**, EXT-02 |
-| `config.py` | 비율 외부 설정 로드 | EXT-01 |
-| `converter.py` | 비율 기반 변환 계산 (비율 주입) | **FR-02**, NFR-01 |
-| `formatters/` | 결과 직렬화 (전략 패턴) | **EXT-03** |
-| `cli.py` / `__main__.py` | 인자 파싱 + 조립 (유일한 I/O) | 통합 |
-| `models.py` / `exceptions.py` | 데이터·예외 계약 | 횡단(NFR-02) |
+| `parsing/parser.py` | 문자열 → 구조화 객체 (순수 함수) | **FR-01**, FR-05 |
+| `parsing/validator.py` | 음수/검증, 도메인 예외 | **FR-04**, FR-05 |
+| `domain/registry.py` | 단위·비율 보관/조회/동적등록 | **FR-03**, **NFR-01(OCP)**, EXT-02 |
+| `output/config.py` | 비율 외부 설정 로드 | EXT-01 |
+| `domain/converter.py` | 비율 기반 변환 계산 (비율 주입) | **FR-02**, NFR-01 |
+| `output/formatters/` | 결과 직렬화 (전략 패턴) | **EXT-03** |
+| `app/assembler.py` | 레지스트리 조립 (설정+동적등록) | EXT-01/02 |
+| `app/cli.py` / `__main__.py` | 인자 파싱 + 조립 (유일한 I/O) | 통합 |
+| `domain/models.py` / `exceptions.py` | 데이터·예외 계약 | 횡단(NFR-02) |
 
 ### OCP 보장 지점 (확장 시 기존 코드 무수정)
 
@@ -211,7 +224,7 @@ python -m unit_converter "meter:2.5" --format json
 python -m unit_converter "meter:2.5" --format csv
 
 # 설정 파일 로드 (비율 외부화)
-python -m unit_converter "meter:2.5" --config units.json
+python -m unit_converter "meter:2.5" --config examples/units.json
 
 # 동적 단위 등록 후 변환
 python -m unit_converter "cubit:1" --register "cubit=0.4572"
@@ -221,12 +234,16 @@ python -m unit_converter "cubit:1" --register "cubit=0.4572"
 
 ```
 $ python -m unit_converter "meter:2.5"
-2.5 meter:
-2.5 meter = 8.2021 feet
-2.5 meter = 2.7340 yard
++-------+-------+--------+
+| unit  | input | result |
++-------+-------+--------+
+| meter |   2.5 |    2.5 |
+| feet  |   2.5 | 8.2021 |
+| yard  |   2.5 | 2.7340 |
++-------+-------+--------+
 ```
 
-### 설정 파일 형식 (`units.json`, EXT-01)
+### 설정 파일 형식 (`examples/units.json`, EXT-01)
 
 ```json
 {
@@ -284,7 +301,7 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 | `U-IN-01` | `""` (빈 입력) | 형식 오류 메시지 |
 | `U-IN-02` | `meter` (콜론 없음) | 형식 오류 |
 | `U-IN-03` | `meter:-1` | 음수 거부 |
-| `U-OUT-01` | `meter:2.5` | 3줄 이상 출력 (스켈레톤) |
+| `U-OUT-01` | `meter:2.5` | ASCII 그리드 테이블 3줄 이상 |
 
 ### Track B — Domain / Logic
 
@@ -309,9 +326,9 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 
 | Test ID | 인자 | Given / Then |
 |---------|------|--------------|
-| `C-CLI-01` | `["meter:2.5"]` | 기본 실행 → table 출력 (에코 헤더 포함) |
+| `C-CLI-01` | `["meter:2.5"]` | 기본 실행 → ASCII grid table 출력 |
 | `C-CLI-02` | `--format json` | JSON 출력 |
-| `C-CLI-03` | `--config units.json` | 설정 비율 로드 후 변환 (EXT-01) |
+| `C-CLI-03` | `--config <units.json>` | 설정 비율 로드 후 변환 (EXT-01) |
 | `C-CLI-04` | `--register cubit=0.4572` | 동적 등록 후 cubit 변환 (EXT-02) |
 | `C-CFG-02` | `load_config` 정상 파일 | Registry에 비율 반영 (EXT-01) |
 

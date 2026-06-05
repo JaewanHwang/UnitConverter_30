@@ -2,14 +2,14 @@
 
 import json
 
-from unit_converter.models import ConversionResult
+from unit_converter.domain.models import ConversionResult
 
 
 class JsonFormatter:
     def __init__(self, precision=4):
         self.precision = precision
 
-    def format(self, results: list[ConversionResult]) -> str:
+    def format(self, results: list[ConversionResult], **_) -> str:
         payload = [
             {
                 "source_unit": r.source_unit,

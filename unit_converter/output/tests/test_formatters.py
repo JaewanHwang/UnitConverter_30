@@ -7,11 +7,11 @@ import json
 
 import pytest
 
-from unit_converter.models import ConversionResult
-from unit_converter.formatters import get_formatter
-from unit_converter.formatters.table import TableFormatter
-from unit_converter.formatters.json_fmt import JsonFormatter
-from unit_converter.formatters.csv_fmt import CsvFormatter
+from unit_converter.domain.models import ConversionResult
+from unit_converter.output.formatters import get_formatter
+from unit_converter.output.formatters.table import TableFormatter
+from unit_converter.output.formatters.json_fmt import JsonFormatter
+from unit_converter.output.formatters.csv_fmt import CsvFormatter
 from unit_converter.exceptions import UnknownFormatError
 
 RESULTS = [
@@ -21,8 +21,16 @@ RESULTS = [
 
 
 def test_table_formatter_serializes():  # F-TBL-01
-    out = TableFormatter().format(RESULTS)
-    assert out == "2.5 meter = 8.2021 feet\n2.5 meter = 2.734 yard"
+    out = TableFormatter().format(
+        RESULTS,
+        source_unit="meter",
+        source_value=2.5,
+        units=["meter", "feet", "yard"],
+    )
+    assert "| unit  | input | result |" in out
+    assert "| meter |   2.5 |    2.5 |" in out
+    assert "| feet  |   2.5 | 8.2021 |" in out
+    assert "| yard  |   2.5 | 2.7340 |" in out
 
 
 def test_json_formatter_serializes():  # F-JSN-01

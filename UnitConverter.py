@@ -1,35 +1,25 @@
+"""레거시 진입점 — unit_converter 패키지로 위임하는 얇은 shim.
+
+기존 인터랙티브 실행(`python UnitConverter.py`)을 유지하되, 변환/검증/출력
+로직은 모두 unit_converter 패키지를 재사용한다. (중복 로직·매직 넘버 제거)
+신규 CLI: `python -m unit_converter "meter:2.5" [--format ...]`
+"""
+
+from unit_converter.app.cli import run_cli
+from unit_converter.exceptions import (
+    InvalidFormatError,
+    NegativeValueError,
+    UnknownUnitError,
+)
+
+
 def main():
-    input_str = input("Insert value for converting (ex: meter:2.5): ")
-
-    if ':' not in input_str:
-        print("Invalid format. Use unit:value (ex: meter:2.5)")
-        return
-
-    unit, value_str = input_str.split(':', 1)
-
+    text = input("Insert value for converting (ex: meter:2.5): ")
     try:
-        value = float(value_str)
-    except ValueError:
-        print(f"Invalid number: {value_str}")
-        return
-
-    if unit == "meter":
-        meter_value = value
-    elif unit == "feet":
-        meter_value = value / 3.28084
-    elif unit == "yard":
-        meter_value = value / 1.09361
-    else:
-        print(f"Unknown unit: {unit}")
-        return
-
-    in_meters = meter_value
-    in_feet = meter_value * 3.28084
-    in_yards = meter_value * 1.09361
-
-    print(f"{value} {unit} = {in_meters} meter")
-    print(f"{value} {unit} = {in_feet} feet")
-    print(f"{value} {unit} = {in_yards} yard")
+        for line in run_cli([text]):
+            print(line)
+    except (InvalidFormatError, NegativeValueError, UnknownUnitError) as exc:
+        print(f"Error: {exc}")
 
 
 if __name__ == "__main__":

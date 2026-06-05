@@ -5,9 +5,9 @@ SPEC.md §7.1 Dual-Track RED 설계표 기준. 최소 구현으로 통과시킨�
 
 import pytest
 
-from unit_converter.converter import Converter
-from unit_converter.registry import UnitRegistry
-from unit_converter.config import load_config
+from unit_converter.domain.converter import Converter
+from unit_converter.domain.registry import UnitRegistry
+from unit_converter.output.config import load_config
 from unit_converter.exceptions import ConfigError
 
 DEFAULT_RATIOS = {"feet": 3.28084, "yard": 1.09361}

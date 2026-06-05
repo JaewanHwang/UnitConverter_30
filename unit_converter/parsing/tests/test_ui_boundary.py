@@ -2,16 +2,16 @@
 
 SPEC.md §7.1 Dual-Track RED 설계표 기준. 최소 구현으로 통과시킨다.
 
-U-OUT-01: 입력 에코(헤더) 1줄 + 변환 라인(입력 단위 제외)으로 총 3줄 이상.
-변환 라인은 SPEC §3대로 입력 단위 자기 자신을 제외한다.
+U-OUT-01: table 포맷은 ASCII 그리드 테이블로 출력하며 3줄 이상이다.
+전 단위(meter/feet/yard)를 unit·input·result 열로 표시한다.
 """
 
 import pytest
 
-from unit_converter.converter import Converter
-from unit_converter.registry import UnitRegistry
-from unit_converter.parser import parse
-from unit_converter.cli import render
+from unit_converter.domain.converter import Converter
+from unit_converter.domain.registry import UnitRegistry
+from unit_converter.parsing.parser import parse
+from unit_converter.app.cli import render
 from unit_converter.exceptions import InvalidFormatError, NegativeValueError
 
 DEFAULT_RATIOS = {"feet": 3.28084, "yard": 1.09361}
@@ -40,6 +40,7 @@ def test_negative_value_rejected():  # U-IN-03
 
 
 def test_output_has_three_or_more_lines():  # U-OUT-01
-    # Given: "meter:2.5" → Then: 에코 헤더 + 변환 라인 = 3줄 이상
+    # Given: "meter:2.5" → Then: ASCII 테이블 = 3줄 이상
     lines = render("meter:2.5", _converter())
+    assert lines[0].startswith("+")
     assert len(lines) >= 3
