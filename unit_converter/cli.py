@@ -4,11 +4,16 @@ from unit_converter.parser import parse
 from unit_converter.validator import validate
 
 
-def render(text, converter, precision=4):
+def render(text, converter, precision=4, echo=True):
     parsed = validate(parse(text))
     converter.registry.ratio(parsed.unit)  # 미등록 단위면 UnknownUnitError
     results = converter.convert_all(parsed.value, parsed.unit)
-    return [
+
+    lines = []
+    if echo:
+        lines.append(f"{parsed.value} {parsed.unit}:")  # 입력 에코(헤더) 라인
+    lines.extend(
         f"{r.source_value} {r.source_unit} = {round(r.target_value, precision)} {r.target_unit}"
         for r in results
-    ]
+    )
+    return lines

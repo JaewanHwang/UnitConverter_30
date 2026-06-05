@@ -33,7 +33,8 @@
 - `1 meter = 1.09361 yard`
 - 모든 변환은 **입력값 → meter → 목표 단위** 2단계로 수행한다. (단위 N개여도 비율은 N개만 유지 → DRY/OCP)
 - 출력 정밀도: 기본 **소수점 4자리**(`--precision`으로 조정 가능, 기본 4).
-- 출력에는 **입력 단위 자기 자신을 제외**한다.
+- 변환 라인에는 **입력 단위 자기 자신을 제외**한다.
+- 맨 앞에 **입력 에코(헤더) 라인**을 1줄 추가한다 → 총 출력 3줄 이상 (U-OUT-01).
 
 ---
 
@@ -220,6 +221,7 @@ python -m unit_converter "cubit:1" --register "cubit=0.4572"
 
 ```
 $ python -m unit_converter "meter:2.5"
+2.5 meter:
 2.5 meter = 8.2021 feet
 2.5 meter = 2.7340 yard
 ```
