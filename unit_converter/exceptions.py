@@ -15,3 +15,7 @@ class UnknownUnitError(KeyError):
 
 class ConfigError(Exception):
     """설정 파일 로드/파싱 실패."""
+
+
+class UnknownFormatError(ValueError):
+    """지원하지 않는 출력 포맷일 때."""
