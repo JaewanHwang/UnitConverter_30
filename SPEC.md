@@ -305,6 +305,16 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 | `F-CSV-01` | `CsvFormatter` | 변환 결과 → 헤더 + 행 CSV |
 | `F-REG-01` | `get_formatter` | `"xml"`(미지원) → 명확한 오류 |
 
+### Track D — CLI Integration (EXT-01/02/03 wiring)
+
+| Test ID | 인자 | Given / Then |
+|---------|------|--------------|
+| `C-CLI-01` | `["meter:2.5"]` | 기본 실행 → table 출력 (에코 헤더 포함) |
+| `C-CLI-02` | `--format json` | JSON 출력 |
+| `C-CLI-03` | `--config units.json` | 설정 비율 로드 후 변환 (EXT-01) |
+| `C-CLI-04` | `--register cubit=0.4572` | 동적 등록 후 cubit 변환 (EXT-02) |
+| `C-CFG-02` | `load_config` 정상 파일 | Registry에 비율 반영 (EXT-01) |
+
 ### RED 단계 금지 규칙
 
 - RED 단계에서 **구현 코드 작성 금지** (테스트만 작성)
