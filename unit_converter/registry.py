@@ -21,5 +21,9 @@ class UnitRegistry:
         except KeyError:
             raise UnknownUnitError(unit)
 
+    def ensure_known(self, unit):
+        """미등록 단위면 UnknownUnitError. 비율 조회 책임을 registry로 모은다."""
+        self.ratio(unit)
+
     def units(self):
         return list(self._ratios)
