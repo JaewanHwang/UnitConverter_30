@@ -296,6 +296,15 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 | `D-REG-01` | `register` | `cubit 0.4572` → 변환 기능 |
 | `D-CFG-01` | `load json` | 깨진 파일 → `ConfigError` |
 
+### Track C — Output / Formatter (EXT-03)
+
+| Test ID | 대상 | Given / Then |
+|---------|------|--------------|
+| `F-TBL-01` | `TableFormatter` | 변환 결과 → `"src = val unit"` 라인 문자열 |
+| `F-JSN-01` | `JsonFormatter` | 변환 결과 → 파싱 가능한 JSON 배열 |
+| `F-CSV-01` | `CsvFormatter` | 변환 결과 → 헤더 + 행 CSV |
+| `F-REG-01` | `get_formatter` | `"xml"`(미지원) → 명확한 오류 |
+
 ### RED 단계 금지 규칙
 
 - RED 단계에서 **구현 코드 작성 금지** (테스트만 작성)
