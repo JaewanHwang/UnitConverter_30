@@ -1,0 +1,55 @@
+---
+description: UnitConverter를 ARRR(RED→GREEN→REFACTOR) TDD 루프로 개발하는 규칙
+globs: UnitConverter.py,unit_converter/**/*.py,tests/**/*.py
+alwaysApply: false
+---
+
+# UnitConverter TDD — ARRR 루프
+
+**주제**: 길이 변환을 테스트 가능한 모듈로 만든다.
+**RGIO**: Role=개발자 · Goal=C2C(개념→코드) · Input=`unit:val` · Output=전 단위.
+
+## 루프 (한 사이클 = 1개 요구 ID)
+
+- **Ask (🔴 RED)**: `tests/test_convert.py`에 실패하는 테스트 스켈레톤부터 작성. 실패를 먼저 확인.
+- **Respond (🟢 GREEN)**: `Registry` + `Converter` 최소 구현으로 통과시킨다. 과한 일반화 금지.
+- **Refine (🛠 REFACTOR)**: `Parser` / `Formatter`를 분리하고 Golden Master로 출력 회귀를 고정. 동작 불변.
+- **Repeat**: 추가 요구를 1개씩 새 RED로 반복. 확장 대상 = 동적 단위 등록, 출력 3포맷(table/json/csv).
+
+## 강제 규칙
+
+1. 테스트 없이 프로덕션 코드를 먼저 작성하지 않는다.
+2. GREEN 단계는 통과에 필요한 최소 코드만 작성한다.
+3. REFACTOR는 모든 테스트가 통과(GREEN)인 상태에서만 한다.
+4. 각 테스트에 대상 요구 ID 주석을 단다 (예: `# FR-02`).
+5. SRP/OCP 유지: 단위 추가는 `registry`, 포맷 추가는 `formatters/`에서만 — 변환기 분기 수정 금지.
+
+## RED 단계 금지 규칙
+
+- RED 단계에서 **구현 코드 작성 금지** (테스트만 작성).
+- `pytest.fail("RED: ...")` 허용.
+- `skip` / `xfail` **금지** (실패는 실패로 남긴다).
+- **1 RED 묶음 = 1 커밋**.
+
+## Dual-Track RED 설계
+
+RED 테스트는 두 트랙으로 나눠 설계한다 (상세표는 `SPEC.md` §7.1).
+
+- **Track A — UI / Boundary**: `U-IN-01`(빈 입력), `U-IN-02`(콜론 없음), `U-IN-03`(음수 거부), `U-OUT-01`(3줄 출력 스켈레톤).
+- **Track B — Domain / Logic**: `D-CNV-01`(`to_meter`), `D-CNV-02`/`D-CNV-03`(`convert_all`), `D-REG-01`(`register`), `D-CFG-01`(`load json`→`ConfigError`).
+
+## 예시 (Ask 스켈레톤)
+
+```python
+# tests/test_convert.py
+import pytest
+
+def test_meter_to_all_units():  # FR-02
+    # Given meter 2.5 → When convert → Then feet≈8.2021, yard≈2.7340
+    from unit_converter.converter import Converter
+    from unit_converter.registry import UnitRegistry
+    reg = UnitRegistry(base="meter", ratios={"feet": 3.28084, "yard": 1.09361})
+    results = Converter(reg).convert("meter", 2.5)
+    got = {r.target_unit: round(r.target_value, 4) for r in results}
+    assert got == {"feet": 8.2021, "yard": 2.7340}  # 입력 단위(meter) 제외
+```
