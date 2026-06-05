@@ -9,7 +9,7 @@ class JsonFormatter:
     def __init__(self, precision=4):
         self.precision = precision
 
-    def format(self, results: list[ConversionResult]) -> str:
+    def format(self, results: list[ConversionResult], **_) -> str:
         payload = [
             {
                 "source_unit": r.source_unit,

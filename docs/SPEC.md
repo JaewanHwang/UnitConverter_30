@@ -33,8 +33,8 @@
 - `1 meter = 1.09361 yard`
 - 모든 변환은 **입력값 → meter → 목표 단위** 2단계로 수행한다. (단위 N개여도 비율은 N개만 유지 → DRY/OCP)
 - 출력 정밀도: 기본 **소수점 4자리**(`--precision`으로 조정 가능, 기본 4).
-- 변환 라인에는 **입력 단위 자기 자신을 제외**한다.
-- 맨 앞에 **입력 에코(헤더) 라인**을 1줄 추가한다 → 총 출력 3줄 이상 (U-OUT-01).
+- json/csv 변환 라인에는 **입력 단위 자기 자신을 제외**한다.
+- **table** 포맷은 전 단위를 `unit | input | result` ASCII 그리드로 출력한다 (U-OUT-01).
 
 ---
 
@@ -234,9 +234,13 @@ python -m unit_converter "cubit:1" --register "cubit=0.4572"
 
 ```
 $ python -m unit_converter "meter:2.5"
-2.5 meter:
-2.5 meter = 8.2021 feet
-2.5 meter = 2.7340 yard
++-------+-------+--------+
+| unit  | input | result |
++-------+-------+--------+
+| meter |   2.5 |    2.5 |
+| feet  |   2.5 | 8.2021 |
+| yard  |   2.5 | 2.7340 |
++-------+-------+--------+
 ```
 
 ### 설정 파일 형식 (`examples/units.json`, EXT-01)
@@ -297,7 +301,7 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 | `U-IN-01` | `""` (빈 입력) | 형식 오류 메시지 |
 | `U-IN-02` | `meter` (콜론 없음) | 형식 오류 |
 | `U-IN-03` | `meter:-1` | 음수 거부 |
-| `U-OUT-01` | `meter:2.5` | 3줄 이상 출력 (스켈레톤) |
+| `U-OUT-01` | `meter:2.5` | ASCII 그리드 테이블 3줄 이상 |
 
 ### Track B — Domain / Logic
 
@@ -322,7 +326,7 @@ RED(🔴) 단계에서 작성할 실패 테스트를 두 트랙으로 나눠 설
 
 | Test ID | 인자 | Given / Then |
 |---------|------|--------------|
-| `C-CLI-01` | `["meter:2.5"]` | 기본 실행 → table 출력 (에코 헤더 포함) |
+| `C-CLI-01` | `["meter:2.5"]` | 기본 실행 → ASCII grid table 출력 |
 | `C-CLI-02` | `--format json` | JSON 출력 |
 | `C-CLI-03` | `--config <units.json>` | 설정 비율 로드 후 변환 (EXT-01) |
 | `C-CLI-04` | `--register cubit=0.4572` | 동적 등록 후 cubit 변환 (EXT-02) |

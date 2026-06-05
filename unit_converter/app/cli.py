@@ -11,17 +11,21 @@ from unit_converter.app.assembler import build_registry
 _PARSER = InputParser()
 
 
-def render(text, converter, fmt="table", precision=4, echo=True):
+def render(text, converter, fmt="table", precision=4):
     parsed = validate(_PARSER.parse(text))
     converter.registry.ensure_known(parsed.unit)  # 미등록 단위면 UnknownUnitError
     results = converter.convert_all(parsed.value, parsed.unit)
 
-    body = get_formatter(fmt, precision=precision).format(results)
-
-    # table 포맷은 입력 에코(헤더) 라인을 앞에 붙인다 (SPEC §3, U-OUT-01).
-    if fmt == "table" and echo:
-        header = f"{parsed.value} {parsed.unit}:"
-        return [header, *body.splitlines()]
+    formatter = get_formatter(fmt, precision=precision)
+    if fmt == "table":
+        body = formatter.format(
+            results,
+            source_unit=parsed.unit,
+            source_value=parsed.value,
+            units=converter.registry.units(),
+        )
+    else:
+        body = formatter.format(results)
     return body.splitlines()
 
 

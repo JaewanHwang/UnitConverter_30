@@ -12,7 +12,7 @@ class CsvFormatter:
     def __init__(self, precision=4):
         self.precision = precision
 
-    def format(self, results: list[ConversionResult]) -> str:
+    def format(self, results: list[ConversionResult], **_) -> str:
         buf = io.StringIO()
         writer = csv.writer(buf, lineterminator="\n")
         writer.writerow(HEADER)
