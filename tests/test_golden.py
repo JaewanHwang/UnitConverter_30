@@ -34,3 +34,26 @@ def test_render_feet_golden():  # EXT-03 / FR-02
         "10.0 feet = 3.048 meter\n"
         "10.0 feet = 3.3333 yard"
     )
+
+
+def test_render_json_golden():  # EXT-03 (F-JSN-01 wiring)
+    from unit_converter.cli import render
+
+    out = "\n".join(render("meter:2.5", _converter(), fmt="json"))
+    assert out == (
+        '[{"source_unit": "meter", "source_value": 2.5, '
+        '"target_unit": "feet", "target_value": 8.2021}, '
+        '{"source_unit": "meter", "source_value": 2.5, '
+        '"target_unit": "yard", "target_value": 2.734}]'
+    )
+
+
+def test_render_csv_golden():  # EXT-03 (F-CSV-01 wiring)
+    from unit_converter.cli import render
+
+    out = "\n".join(render("meter:2.5", _converter(), fmt="csv"))
+    assert out == (
+        "source_unit,source_value,target_unit,target_value\n"
+        "meter,2.5,feet,8.2021\n"
+        "meter,2.5,yard,2.734"
+    )
