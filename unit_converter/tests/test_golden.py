@@ -1,11 +1,12 @@
-"""Golden Master — Safe Refactor 가드 (SPEC §3/§5).
+"""Golden Master — 교차 도메인 출력 회귀 가드 (SPEC §3/§5).
 
-리팩터링 전 현재 render() 출력을 스냅샷으로 고정한다.
-이후 구조 변경(InputParser/registry 추출) 시 출력이 한 글자도 바뀌지 않아야 한다.
+render() 전체 출력(파싱→변환→포맷)을 스냅샷으로 고정한다.
+구조 변경 시 출력이 한 글자도 바뀌지 않아야 한다.
 """
 
 from unit_converter.domain.converter import Converter
 from unit_converter.domain.registry import UnitRegistry
+from unit_converter.app.cli import render
 
 DEFAULT_RATIOS = {"feet": 3.28084, "yard": 1.09361}
 
@@ -15,8 +16,6 @@ def _converter():
 
 
 def test_render_meter_golden():  # EXT-03 / FR-02
-    from unit_converter.app.cli import render
-
     out = "\n".join(render("meter:2.5", _converter()))
     assert out == (
         "2.5 meter:\n"
@@ -26,8 +25,6 @@ def test_render_meter_golden():  # EXT-03 / FR-02
 
 
 def test_render_feet_golden():  # EXT-03 / FR-02
-    from unit_converter.app.cli import render
-
     out = "\n".join(render("feet:10", _converter()))
     assert out == (
         "10.0 feet:\n"
@@ -37,8 +34,6 @@ def test_render_feet_golden():  # EXT-03 / FR-02
 
 
 def test_render_json_golden():  # EXT-03 (F-JSN-01 wiring)
-    from unit_converter.app.cli import render
-
     out = "\n".join(render("meter:2.5", _converter(), fmt="json"))
     assert out == (
         '[{"source_unit": "meter", "source_value": 2.5, '
@@ -49,8 +44,6 @@ def test_render_json_golden():  # EXT-03 (F-JSN-01 wiring)
 
 
 def test_render_csv_golden():  # EXT-03 (F-CSV-01 wiring)
-    from unit_converter.app.cli import render
-
     out = "\n".join(render("meter:2.5", _converter(), fmt="csv"))
     assert out == (
         "source_unit,source_value,target_unit,target_value\n"

@@ -128,31 +128,33 @@ UnitConverter_30/
 │   ├── domain/                     # [핵심 도메인] 순수 로직 (I/O 없음)
 │   │   ├── models.py               # ParsedInput, ConversionResult
 │   │   ├── registry.py             # UnitRegistry, default_registry (OCP)
-│   │   └── converter.py            # Converter : value → meter → 전 단위
+│   │   ├── converter.py            # Converter : value → meter → 전 단위
+│   │   └── tests/test_convert.py   # Track B (FR-02, NFR-01, EXT-02, D-CFG-01)
 │   ├── parsing/                    # [입력 도메인]
 │   │   ├── parser.py               # InputParser : "unit:value" → ParsedInput
-│   │   └── validator.py            # validate : 음수/검증
+│   │   ├── validator.py            # validate : 음수/검증
+│   │   └── tests/test_ui_boundary.py  # Track A (FR-01/04/05, U-OUT-01)
 │   ├── output/                     # [출력 도메인] 직렬화·외부 설정
 │   │   ├── config.py               # load_config : units.json 로드 (EXT-01)
-│   │   └── formatters/             # 출력 전략 (포맷 추가 = 파일 추가, EXT-03)
-│   │       ├── base.py             # OutputFormatter Protocol
-│   │       ├── table.py / json_fmt.py / csv_fmt.py
-│   │       └── __init__.py         # FORMATTERS 레지스트리 + get_formatter()
-│   └── app/                        # [응용 계층] 조립·진입 (I/O 경계)
-│       ├── assembler.py            # build_registry : 설정+동적등록 조립 (SRP)
-│       └── cli.py                  # render + argparse(run_cli)
-├── tests/                          # PRD 추적 테스트
-│   ├── test_convert.py             # Track B (FR-02, NFR-01, EXT-02, D-CFG-01)
-│   ├── test_ui_boundary.py         # Track A (FR-01/04/05, U-OUT-01)
-│   ├── test_formatters.py          # Track C (EXT-03)
-│   ├── test_cli.py                 # Track D (CLI 통합, EXT wiring)
-│   ├── test_config.py              # EXT-01 정상 로드
-│   └── test_golden.py              # Golden Master (출력 회귀 가드)
+│   │   ├── formatters/             # 출력 전략 (포맷 추가 = 파일 추가, EXT-03)
+│   │   │   ├── base.py             # OutputFormatter Protocol
+│   │   │   ├── table.py / json_fmt.py / csv_fmt.py
+│   │   │   └── __init__.py         # FORMATTERS 레지스트리 + get_formatter()
+│   │   └── tests/                  # test_formatters.py (C), test_config.py (EXT-01)
+│   ├── app/                        # [응용 계층] 조립·진입 (I/O 경계)
+│   │   ├── assembler.py            # build_registry : 설정+동적등록 조립 (SRP)
+│   │   ├── cli.py                  # render + argparse(run_cli)
+│   │   └── tests/test_cli.py       # Track D (CLI 통합, EXT wiring)
+│   └── tests/test_golden.py        # 교차 도메인 Golden Master (출력 회귀 가드)
 ├── units.json                      # 기본 변환 비율 (외부화, EXT-01)
 ├── UnitConverter.py                # 레거시 진입점 (run_cli 위임 shim)
+├── pyproject.toml                  # pytest 설정 (testpaths=unit_converter)
 ├── requirements.txt · conftest.py
 ├── README.md · AGENTS.md · SPEC.md
 ```
+
+> 테스트는 각 도메인 폴더의 `tests/`에 동거(per-domain)하고, 교차 도메인 Golden Master만
+> 패키지 루트 `tests/`에 둔다. pytest는 `testpaths=["unit_converter"]`로 전 도메인을 수집한다.
 
 ### 모듈 → FR/NFR 매핑
 

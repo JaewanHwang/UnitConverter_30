@@ -1,0 +1,5 @@
+[tool.pytest.ini_options]
+# 도메인별 테스트가 unit_converter/<domain>/tests/ 에 동거한다.
+testpaths = ["unit_converter"]
+python_files = ["test_*.py"]
+addopts = "-q"
